@@ -1,12 +1,12 @@
-# MCSR Recording Tool Version 1.0
+# MCSR Ranked Recording Tool Version 1.0
 
-A tool for automatically starting and stopping recordings for MCSR games.
+A tool for automatically starting and stopping recordings for MCSR Ranked games.
 
 The tool removes the need to manually manage recordings and makes it easier to organise and manage your gameplay footage.
 
 ## Features
 
-- 🎥 Automatically starts recording when an MCSR game begins
+- 🎥 Automatically starts recording when an MCSR Ranked game begins
 - ⏹️ Automatically stops recording when the game ends
 - 📁 Automatically organises recorded videos
 - 🏷️ Automatically generates video titles
@@ -54,7 +54,7 @@ Click **Save** to save your configuration. I would highly recommend restarting t
 
 Press **Start**.
 
-The tool will monitor your MCSR game and automatically manage the recording.
+The tool will monitor your MCSR Ranked game and automatically manage the recording.
 
 ## Video Organisation
 
