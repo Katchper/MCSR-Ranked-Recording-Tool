@@ -202,7 +202,7 @@ def rename_latest_recording():
 
     time.sleep(0.3)
     if "By Date and Completion Status" in str(settings["video_sort"]):
-        print("test")
+        #print("test")
         sort_recordings(settings["video_path"])
 
 def rename_recording(old_path, new_path, recording_path):
@@ -313,4 +313,4 @@ def obs_is_running():
     )
     return "obs64.exe" in result.stdout
 
-print(obs_is_running())
+#print(obs_is_running())

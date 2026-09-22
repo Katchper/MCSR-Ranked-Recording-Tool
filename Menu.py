@@ -1,3 +1,4 @@
+import sys
 import threading
 from tkinter import filedialog
 
@@ -22,7 +23,7 @@ class App(ctk.CTk):
         self.settings = {}
         self.watcher_running = False
         self.obs_recording = False
-        self.iconbitmap("Icon.ico")
+        self.iconbitmap(self.resource_path("Icon.ico"))
         self.obs_recording = False
         self.resizable(False, False)
 
@@ -48,6 +49,11 @@ class App(ctk.CTk):
             p.grid(row=0, column=0, sticky="nsew")
 
         self.show_page("menu")
+
+    def resource_path(self, filename):
+        if getattr(sys, "frozen", False):
+            return os.path.join(sys._MEIPASS, filename)
+        return os.path.join(os.path.dirname(__file__), filename)
 
     def show_page(self, name):
         if name == "settings":
