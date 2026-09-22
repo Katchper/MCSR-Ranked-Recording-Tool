@@ -35,17 +35,20 @@ Launch `MCSR Recording Tool.exe`.
 Open the **Settings** page and configure all settings:
 
 - Minecraft Username
-- Minecraft Log Directory (Will attempt to auto locate)
+- Minecraft Log Directory
+    (Will attempt to auto locate example being: `C:\Users\YourUser\AppData\Roaming\PrismLauncher\instances\MCSRRanked\minecraft\logs`)
 - Video Sorting
 - Video Output Directory
-- OBS Websocket settings
-- Auto Open OBS (When start is pressed)
-- OBS link directory (needs to be mapped to a .lnk)
-- 
+    (default in OBS being `C:/Users/YourUser/Videos`)
+- OBS Websocket settings (port, server, password)
+- Auto Open OBS (When start button is pressed - it will check if already open)
+- OBS link directory
+    (needs to be mapped to a .lnk program opens start menu by default example being `C:/ProgramData/Microsoft/Windows/Start Menu/Programs/OBS Studio.lnk`)
+  
 - API Key **CAN BE IGNORED*
 ### 4. Save Your Settings
 
-Click **Save** to save your configuration.
+Click **Save** to save your configuration. I would highly recommend restarting the recording tool after this step currently.
 
 ### 5. Start Recording
 
