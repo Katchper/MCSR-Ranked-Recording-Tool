@@ -28,7 +28,7 @@ Download the latest `.exe` from the **Releases** page.
 
 ### 2. Open the App
 
-Launch `MCSR Recording Tool.exe`.
+Launch `MCSR Ranked Recording Tool.exe`.
 
 ### 3. Configure Settings
 
