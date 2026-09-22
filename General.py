@@ -1,5 +1,7 @@
 import os
 import re
+import subprocess
+
 import keyring
 import requests
 import json
@@ -47,7 +49,7 @@ def findMCPath():
     else :
         finalPath = os.getenv("APPDATA")
 
-    print("Final path: ", finalPath)
+    #print("Final path: ", finalPath)
     return finalPath
 
 
@@ -76,14 +78,16 @@ def getUUID(username):
 # 3 = opponent
 
 def checkGameStatus():
-    finalTime = ""
-    winner = 0
+    settings = loadSettings()
 
+    finalTime = "111.111"
+    winner = 0
+    seed_type = "None"
     params = {
         "count": 1
     }
 
-    response = requests.get("https://api.mcsrranked.com/users/katchper/matches", params=params)
+    response = requests.get("https://api.mcsrranked.com/users/"+settings["username"]+"/matches", params=params)
 
     if response.status_code == 200:
 
@@ -91,16 +95,19 @@ def checkGameStatus():
         timeVal = match_result["data"][0]["result"]["time"] / 1000
         winner_player = match_result["data"][0]["result"]["uuid"]
         forfeited = match_result["data"][0]["forfeited"]
+        seed_type = match_result["data"][0]["seedType"]
 
         minute = int(timeVal // 60)
         second = int(timeVal % 60)
-        finalTime = f"{minute}:{second}"
+        if second < 10:
+            second = "0" + str(second)
+        finalTime = f"{minute}.{second}"
 
 
         settings = loadSettings()
 
-        if winner_player != "None":
-            if settings["uuid"] == winner_player:
+        if str(winner_player) != "None":
+            if settings["uuid"] == str(winner_player):
                 if forfeited:
                     winner = 2
                 else:
@@ -109,7 +116,7 @@ def checkGameStatus():
                 winner = 3
 
 
-    return winner, finalTime
+    return winner, finalTime, seed_type
 
 # CURRENT SETTINGS SAVED
 #  "username"
@@ -137,7 +144,8 @@ def loadSettings():
         settings["api_pass"] = keyring.get_password(APP_NAME, "API")
 
     except:
-        print("settings file not found")
+        #print("settings file not found")
+        pass
 
     return settings
 
@@ -166,26 +174,60 @@ def readLogLine(line):
 
 
 
-def rename_latest_recording(self):
-    recordings_path = r"C:\Users\Katch\Videos"  # folder path
+def rename_latest_recording():
+    winner, finaltime, seed = checkGameStatus()
+    #print(finaltime)
+    settings = loadSettings()
+
+    recordings_path = settings["video_path"]  # folder path
 
     files = [f for f in os.listdir(recordings_path) if f.endswith(".mp4")]
     latest_file = max(
         files,
         key=lambda f: os.path.getctime(os.path.join(recordings_path, f))
     )
-    if self.ended:
-        new_name = f"COMPLETE-mcsrranked_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.mp4"
+    if winner == 1:
+        new_name = f"Won_{seed}_{finaltime}.mp4"
+    elif winner == 2:
+        new_name = f"Won_FF_{seed}_{finaltime}.mp4"
+    elif winner == 3:
+        new_name = f"Lost_{seed}_{finaltime}.mp4"
     else:
-        new_name = f"mcsrranked_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.mp4"
-    latest_file = os.path.join(r"C:\Users\Katch\Videos", latest_file)
-    new_name = os.path.join(r"C:\Users\Katch\Videos", new_name)
-    self.rename_recording(latest_file, new_name)
+        new_name = f"Incomplete_{seed}_{finaltime}.mp4"
+
+    latest_file = os.path.join(recordings_path, latest_file)
+    new_name = os.path.join(recordings_path, new_name)
+
+    rename_recording(latest_file, new_name, settings["video_path"])
+
     time.sleep(0.3)
-    self.sort_recordings()
+    if "By Date and Completion Status" in str(settings["video_sort"]):
+        print("test")
+        sort_recordings(settings["video_path"])
+
+def rename_recording(old_path, new_path, recording_path):
+    if wait_for_file_release(old_path, recording_path):
+        os.rename(old_path, new_path)
+    else:
+        pass
+        #print("File still locked — rename skipped")
 
 
-def sort_recordings(self):
+
+def wait_for_file_release(path1, recording_path, timeout=10):
+    start = time.time()
+    timeout = float(timeout)
+    while time.time() - start < timeout:
+        try:
+            targetpath = os.path.join(recording_path, path1)
+            os.rename(targetpath, targetpath)
+            return True
+        except PermissionError:
+            time.sleep(0.2)
+    return False
+
+
+def sort_recordings(recording_path):
     # OPEN RECORDINGS FOLDER -
     # READ WHAT FILES ARE THERE
     # IF video FILE NAME DOES NOT COMTAIN - COMPLETE - >  delete if older than x days long (default = 3)
@@ -194,43 +236,81 @@ def sort_recordings(self):
     # for remaining videos, check if a folder for the date exists else, create a folder for the date
     # iterate over all videos moving them accordingly.
 
-    print("Sorting recordings...")
-    recordings_path = r"C:\Users\Katch\Videos"
+    #print("Sorting recordings...")
+    recordings_path = recording_path
 
-    CompletedRuns = Path(recordings_path + "/CompletedRuns")
-    NotCompletedRuns = Path(recordings_path + "/NotCompletedRuns")
+    #print(recordings_path)
 
-    CompletedRuns.mkdir(exist_ok=True)
-    NotCompletedRuns.mkdir(exist_ok=True)
+    WonRuns = Path(recordings_path + "/WonRuns")
+    LostRuns = Path(recordings_path + "/LostRuns")
+    OtherRuns = Path(recordings_path + "/OtherRuns")
+
+    WonRuns.mkdir(exist_ok=True)
+    LostRuns.mkdir(exist_ok=True)
+    OtherRuns.mkdir(exist_ok=True)
+
 
     for f in os.listdir(recordings_path):
-        if os.path.isfile(os.path.join(recordings_path, f)):
+        video_path = os.path.join(recordings_path, f)
+        #print(video_path)
+        #print(f)
+        if os.path.isfile(video_path):
+            #print("ISFILE")
             if f.endswith(".mp4"):
-                match = re.search(r"\d{4}-\d{2}-\d{2}", f)
+
+                match = re.search(r"\d+.\d+", f)
+                #print(match)
+
                 if match:
-                    FileLocation = '/NotCompletedRuns'
-                    matchDate = re.search(r"COMPLETE", f)
+                    #print("confirm")
+                    FileLocation = '/OtherRuns'
+                    matchDate = re.search(r"Won", f)
                     if matchDate:
-                        FileLocation = '/CompletedRuns'
+                        FileLocation = '/WonRuns'
 
-                    recording_date = match.group()
-                    convertedDate = datetime.strptime(match.group(), "%Y-%m-%d").date()
+                    matchDate = re.search(r"Lost", f)
+                    if matchDate:
+                        FileLocation = '/LostRuns'
+                    #print(FileLocation)
 
-                    if date.today() - timedelta(days=4) >= convertedDate and FileLocation == '/NotCompletedRuns':
+
+                    convertedDate = datetime.fromtimestamp(os.path.getmtime(video_path)).date()
+
+                    ## NEEDS REWORKING
+                    """
+                    if date.today() - timedelta(days=4) >= convertedDate and FileLocation == '/LostRuns':
                         fileToDelete = Path(recordings_path + "/" + f)
                         fileToDelete.unlink(missing_ok=True)
-                    else:
 
-                        folderstring = recordings_path + FileLocation + "/" + recording_date
-                        folderpath = Path(folderstring)
-                        folderpath.mkdir(exist_ok=True)
+                    elif date.today() - timedelta(days=4) >= convertedDate and FileLocation == '/OtherRuns':
+                        fileToDelete = Path(recordings_path + "/" + f)
+                        fileToDelete.unlink(missing_ok=True)
+                    """
 
-                        startString = recordings_path + "/" + f
+                    folderstring = recordings_path + FileLocation + "/" + str(convertedDate)
+                    folderpath = Path(folderstring)
+                    folderpath.mkdir(exist_ok=True)
 
-                        startDirectory = Path(startString)
-                        print(startString)
-                        destinationString = folderstring + "/" + f
-                        destinationDirectory = Path(destinationString)
+                    startString = recordings_path + "/" + f
 
-                        print(destinationString)
-                        shutil.move(startDirectory, destinationDirectory)
+                    startDirectory = Path(startString)
+                    #print(startString)
+                    destinationString = folderstring + "/" + f
+                    destinationDirectory = Path(destinationString)
+
+                    #print(destinationString)
+                    shutil.move(startDirectory, destinationDirectory)
+
+#rename_latest_recording()
+#sort_recordings(r"C:/Users/Katch/Videos")
+
+
+def obs_is_running():
+    result = subprocess.run(
+        ["tasklist", "/FI", "IMAGENAME eq obs64.exe"],
+        capture_output=True,
+        text=True
+    )
+    return "obs64.exe" in result.stdout
+
+print(obs_is_running())

@@ -18,7 +18,6 @@ class App(ctk.CTk):
         self.title("MCSR Ranked Recording Tool")
         self.geometry("520x420")
         self.minsize(450, 350)
-        #subprocess.Popen(r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OBS Studio.lnk", shell=True)
         self.ended = False
         self.settings = {}
         self.watcher_running = False
@@ -28,6 +27,7 @@ class App(ctk.CTk):
         self.resizable(False, False)
 
         threading.Thread(
+            target=self.watch_log,
             daemon=True
         ).start()
 
@@ -54,8 +54,8 @@ class App(ctk.CTk):
             self.minsize(500, 750)
             self.watcher_running = False
             self.stop_recording()
-            print(self.watcher_running)
-            print(self.watcher_running)
+            #print(self.watcher_running)
+            #print(self.watcher_running)
         else:
             self.minsize(450, 300)
 
@@ -66,41 +66,41 @@ class App(ctk.CTk):
         self.watcher_running = False
         self.stop_recording()
         # optional: cleanup settings or save here
-        print("Closing app safely...")
+        #print("Closing app safely...")
 
         # destroy everything properly
         self.destroy()
 
     def watch_log(self):
-        settings = loadSettings()
-        log_path = os.path.join(settings[""], "latest.log")  # latest.log
+        try:
+            settings = loadSettings()
+            log_path = os.path.join(settings["mc_path"], "latest.log")  # latest.log
+            with open(log_path, "r", encoding="utf-8", errors="replace") as f:
+                # Ignore existing contents
+                f.seek(0, 2)
 
-        with open(log_path, "r", encoding="utf-8", errors="replace") as f:
+                while True:
+                    line = f.readline()
 
-            # Ignore existing contents
-            f.seek(0, 2)
+                    if not line:
+                        time.sleep(0.05)
+                        continue
 
-            while True:
+                    # Watcher disabled?
+                    if not self.watcher_running:
+                        continue
 
-                line = f.readline()
+                    line = line.strip()
 
-                if not line:
-                    time.sleep(0.025)
-                    continue
+                    record_status = readLogLine(line)
+                    #print(record_status)
+                    if record_status == 1:
+                        self.start_recording()
 
-                # Watcher disabled?
-                if not self.watcher_running:
-                    continue
-
-                line = line.strip()
-
-                record_status = readLogLine(line)
-
-                if record_status == 1:
-                    self.start_recording()
-
-                elif record_status == 2:
-                    self.stop_recording()
+                    elif record_status == 2:
+                        self.stop_recording()
+        except:
+            pass
 
 
     def connectOBS(self):
@@ -119,13 +119,14 @@ class App(ctk.CTk):
         if not self.obs_recording:
             self.obs.start_record()
             self.obs_recording = True
-            print("Recording started")
+            #print("Recording started")
 
     def stop_recording(self):
         if self.obs_recording:
             self.obs.stop_record()
             self.obs_recording = False
-            print("Recording stopped")
+            rename_latest_recording()
+            #("Recording stopped")
 
 
 
@@ -185,6 +186,11 @@ class MainMenu(ctk.CTkFrame):
     def toggle_watcher(self):
         settings = loadSettings()
         self.app.watcher_running = not self.app.watcher_running
+
+        if "Yes" in str(settings["obs_auto_open"]) and self.app.watcher_running:
+            if not obs_is_running():
+                subprocess.Popen(settings["obs_path"], shell=True)
+
 
         try:
             if "username" in settings:
@@ -666,65 +672,76 @@ class SettingsPage(ctk.CTkFrame):
             with settings_file.open("r", encoding="utf-8") as f:
                 settings = json.load(f)
         except:
-            print("no settings")
+            #print("no settings")
+            pass
         try:
             self.username_entry.delete(0, "end")
             self.username_entry.insert(0, settings["username"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.mc_path_entry.delete(0, "end")
             self.mc_path_entry.insert(0, settings["mc_path"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.mode_dropdown.set(settings["video_sort"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.video_path_entry.delete(0, "end")
             self.video_path_entry.insert(0, settings["video_path"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.websocket_port_entry.delete(0, "end")
             self.websocket_port_entry.insert(0, settings["obs_port"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.websocket_server_entry.delete(0, "end")
             self.websocket_server_entry.insert(0, settings["obs_server"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             if keyring.get_password(APP_NAME, "OBSPASS") != "None":
                 self.recording_pass_entry.delete(0, "end")
                 self.recording_pass_entry.insert(0, keyring.get_password(APP_NAME, "OBSPASS"))
         except:
-            print("error")
+            #print("error")
+            pass
         try:
             if keyring.get_password(APP_NAME, "API") != "None":
                 self.api_key_entry.delete(0, "end")
                 self.api_key_entry.insert(0, keyring.get_password(APP_NAME, "API"))
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.obs_path_entry.delete(0, "end")
             self.obs_path_entry.insert(0, settings["obs_path"])
         except:
-            print("error")
+            #print("error")
+            pass
 
         try:
             self.obs_dropdown.set(settings["obs_auto_open"])
         except:
-            print("error")
+            #print("error")
+            pass
 
 
     def save_settings(self):
@@ -843,7 +860,7 @@ class SettingsPage(ctk.CTkFrame):
 
     def testAPI(self):
         response = requests.get("https://api.mcsrranked.com/users/katchper/matches")
-        print(response.status_code)
+        #print(response.status_code)
         if response.status_code == 200:
             self.test_api_button.configure(
                 fg_color="#2bb041",
