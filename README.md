@@ -19,7 +19,6 @@ The tool removes the need to manually manage recordings and makes it easier to o
 - OBS Studio
 - Minecraft
 - MCSR Ranked
-- Python *(only required if running from source)*
 
 ## Quick Start Guide
 
