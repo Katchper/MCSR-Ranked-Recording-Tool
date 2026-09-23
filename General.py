@@ -153,10 +153,12 @@ def loadSettings():
 # 0 = skip
 # 1 = start recording
 # 2 = stop recording
+# 3 = seed change flag
 def readLogLine(line):
     result = 0
+
     if (
-            "[WorldCreator] Match initializing" in line
+            "[WorldCreator] creating new queue" in line
     ):
         result = 1
 
@@ -168,14 +170,28 @@ def readLogLine(line):
     ):
         result = 2
 
+    elif (
+            "Everyone has agreed to the seed change vote" in line
+    ):
+        result = 3
+
     return result
 
 # win, time = checkGameStatus()
 
 
 
-def rename_latest_recording():
-    winner, finaltime, seed = checkGameStatus()
+def rename_latest_recording(seed_change_flag):
+    if seed_change_flag == 0:
+        winner, finaltime, seed = checkGameStatus()
+    elif seed_change_flag == 1:
+        winner = 4
+        finaltime = "111.111"
+        seed = "SeedChanged"
+    elif seed_change_flag == 2:
+        winner = 4
+        finaltime = "111.111"
+        seed = "AppClosed"
     #print(finaltime)
     settings = loadSettings()
 

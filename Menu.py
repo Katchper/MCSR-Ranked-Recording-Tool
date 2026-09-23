@@ -15,16 +15,14 @@ ctk.set_default_color_theme("blue")
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+        self.obs = None
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.title("MCSR Ranked Recording Tool")
-        self.geometry("520x420")
-        self.minsize(450, 350)
-        self.ended = False
         self.settings = {}
+        self.geometry("520x420")
         self.watcher_running = False
         self.obs_recording = False
         self.iconbitmap(self.resource_path("Icon.ico"))
-        self.obs_recording = False
         self.resizable(False, False)
 
         threading.Thread(
@@ -59,7 +57,7 @@ class App(ctk.CTk):
         if name == "settings":
             self.minsize(500, 750)
             self.watcher_running = False
-            self.stop_recording()
+            self.stop_recording(2)
             #print(self.watcher_running)
             #print(self.watcher_running)
         else:
@@ -70,56 +68,68 @@ class App(ctk.CTk):
     def on_close(self):
         # stop any running state safely
         self.watcher_running = False
-        self.stop_recording()
-        # optional: cleanup settings or save here
+        self.stop_recording(2)
         #print("Closing app safely...")
 
         # destroy everything properly
         self.destroy()
 
     def watch_log(self):
-        try:
-            settings = loadSettings()
-            log_path = os.path.join(settings["mc_path"], "latest.log")  # latest.log
-            with open(log_path, "r", encoding="utf-8", errors="replace") as f:
-                # Ignore existing contents
-                f.seek(0, 2)
+     #   try:
+        seed_change_flag = 0
+        settings = loadSettings()
+        log_path = os.path.join(settings["mc_path"], "latest.log")  # latest.log
 
-                while True:
-                    line = f.readline()
+        with open(log_path, "r", encoding="utf-8", errors="replace") as f:
+            # Ignore existing contents
+            f.seek(0, 2)
 
-                    if not line:
-                        time.sleep(0.05)
-                        continue
+            while True:
+                #print(seed_change_flag)
+                line = f.readline()
 
-                    # Watcher disabled?
-                    if not self.watcher_running:
-                        continue
+                if not line:
+                    time.sleep(0.25)
+                    continue
 
-                    line = line.strip()
+                # Watcher disabled?
+                if not self.watcher_running:
+                    continue
 
-                    record_status = readLogLine(line)
-                    #print(record_status)
-                    if record_status == 1:
-                        self.start_recording()
+                line = line.strip()
 
-                    elif record_status == 2:
-                        self.stop_recording()
-        except:
-            pass
+                record_status = readLogLine(line)
+                #print(record_status)
+
+                if record_status == 3:
+                    seed_change_flag = 1
+
+                if record_status == 1:
+                    self.start_recording()
+
+                elif record_status == 2:
+                    self.stop_recording(seed_change_flag)
+                    seed_change_flag = 0
+       # except:
+       #     print("Log file not found.")
+       #     pass
 
 
     def connectOBS(self):
-        settings = loadSettings()
+        if self.obs is None:
+            settings = loadSettings()
 
-        self.obs = ReqClient(
-            host=settings["obs_server"],
-            port=settings["obs_port"],
-            password=settings["obs_pass"]
-        )
+            self.obs = ReqClient(
+                host=settings["obs_server"],
+                port=settings["obs_port"],
+                password=settings["obs_pass"]
+            )
+            #print("Connected to OBS")
+            #print(self.obs)
+        
 
     def start_recording(self):
-        if not hasattr(self, "obs"):
+        if self.obs is None:
             self.connectOBS()
 
         if not self.obs_recording:
@@ -127,14 +137,20 @@ class App(ctk.CTk):
             self.obs_recording = True
             #print("Recording started")
 
-    def stop_recording(self):
+    def stop_recording(self, seed_change_flag):
         if self.obs_recording:
             self.obs.stop_record()
             self.obs_recording = False
-            rename_latest_recording()
+            self.disconnectOBS()
+            rename_latest_recording(seed_change_flag)
             #("Recording stopped")
 
-
+    def disconnectOBS(self):
+        if self.obs is not None:
+            self.obs.disconnect()
+            self.obs = None
+            #print("Disconnected from OBS")
+            #print(self.obs)
 
 '''
 MAIN MENU SCREEN 
@@ -186,7 +202,7 @@ class MainMenu(ctk.CTkFrame):
     def settingsNav(self):
         if self.app.watcher_running:
             self.toggle_watcher()
-            app.stop_recording()
+            app.stop_recording(2)
         app.show_page("settings")
 
     def toggle_watcher(self):
@@ -197,6 +213,8 @@ class MainMenu(ctk.CTkFrame):
             if not obs_is_running():
                 subprocess.Popen(settings["obs_path"], shell=True)
 
+        if not self.app.watcher_running:
+            app.stop_recording(2)
 
         try:
             if "username" in settings:

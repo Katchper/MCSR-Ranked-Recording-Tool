@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="Completed Initial Version. Tested and basic functionality confirmed">
+    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/General.py" beforeDir="false" afterPath="$PROJECT_DIR$/General.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
@@ -24,18 +24,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Katchper"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Katchper&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Katchper/MCSR-Recording-Tool.git",
-    "accountId": "93a639f9-d558-48f7-8462-f4cfe41b1609"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Katchper/MCSR-Recording-Tool.git&quot;,
+    &quot;accountId&quot;: &quot;93a639f9-d558-48f7-8462-f4cfe41b1609&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -155,7 +155,15 @@
       <option name="project" value="LOCAL" />
       <updated>1790091310324</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements.">
+      <option name="closed" value="true" />
+      <created>1790099302696</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1790099302696</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -184,6 +192,7 @@
     <MESSAGE value="Initial Commit" />
     <MESSAGE value="icon" />
     <MESSAGE value="Completed Initial Version. Tested and basic functionality confirmed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Completed Initial Version. Tested and basic functionality confirmed" />
+    <MESSAGE value="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements." />
+    <option name="LAST_COMMIT_MESSAGE" value="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements." />
   </component>
 </project>
