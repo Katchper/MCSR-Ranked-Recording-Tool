@@ -40,7 +40,7 @@ Open the **Settings** page and configure all settings:
 - Video Sorting
 - Video Output Directory
     (default in OBS being `C:/Users/YourUser/Videos`)
-- OBS Websocket settings (port, server, password)
+- OBS Websocket settings (port, server, password which can be found in obs under tools > websocket server settings)
 - Auto Open OBS (When start button is pressed - it will check if already open)
 - OBS link directory
     (needs to be mapped to a .lnk program opens start menu by default example being `C:/ProgramData/Microsoft/Windows/Start Menu/Programs/OBS Studio.lnk`)
