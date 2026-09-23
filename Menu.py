@@ -55,7 +55,7 @@ class App(ctk.CTk):
 
     def show_page(self, name):
         if name == "settings":
-            self.minsize(500, 750)
+            self.minsize(500, 900)
             self.watcher_running = False
             self.stop_recording(2)
             #print(self.watcher_running)
@@ -212,6 +212,10 @@ class MainMenu(ctk.CTkFrame):
         if "Yes" in str(settings["obs_auto_open"]) and self.app.watcher_running:
             if not obs_is_running():
                 subprocess.Popen(settings["obs_path"], shell=True)
+
+        if "Yes" in str(settings["ninja_auto_open"]) and self.app.watcher_running:
+            if not ninja_is_running():
+                subprocess.Popen(settings["ninja_path"], shell=True)
 
         if not self.app.watcher_running:
             app.stop_recording(2)
@@ -495,7 +499,7 @@ class SettingsPage(ctk.CTkFrame):
 
         self.obs_dropdown = ctk.CTkOptionMenu(
             recording_table,
-            values=["Yes", "No"]
+            values=["No","Yes"]
         )
 
         self.obs_dropdown.grid(
@@ -610,6 +614,101 @@ class SettingsPage(ctk.CTkFrame):
             padx=10,
             pady=5,
         )
+
+        ## OTHER SETTINGS
+        ## EG AUTO OPEN OTHER APPS, such as ninjabrain or so
+
+        other_frame = ctk.CTkFrame(self)
+        other_frame.pack(
+            fill="x",
+            padx=20,
+            pady=10
+        )
+
+        ctk.CTkLabel(
+            other_frame,
+            text="Other Settings",
+            font=ctk.CTkFont(size=20, weight="bold")
+        ).pack(pady=10)
+
+        other_table = ctk.CTkFrame(
+            other_frame,
+            fg_color="transparent"
+        )
+        other_table.pack(
+            fill="x",
+            padx=15,
+            pady=(0, 15)
+        )
+
+        other_table.grid_columnconfigure(1, weight=1)
+        other_table.grid_columnconfigure(2, weight=0)
+
+
+        ctk.CTkLabel(
+            other_table,
+            text="Auto Open Ninjabrain-Bot"
+        ).grid(
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        self.ninjabrain_dropdown = ctk.CTkOptionMenu(
+            other_table,
+            values=["No", "Yes"]
+        )
+
+        self.ninjabrain_dropdown.grid(
+            row=0,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        ctk.CTkLabel(
+            other_table,
+            text="Ninjabrain-Bot directory"
+        ).grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        self.ninjabrain_path_entry = ctk.CTkEntry(
+            other_table
+        )
+
+        self.ninjabrain_path_entry.grid(
+            row=1,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+        ctk.CTkButton(
+            other_table,
+            width=70,
+            fg_color="#c84d44",
+            hover_color="#9c3d37",
+            text="Select",
+            command=self.pick_ninja_dir
+
+        ).grid(
+            row=1,
+            column=2,
+            padx=10,
+            pady=5,
+        )
+
+
+
+
 
         # =========================
         # IMPORT / EXPORT BUTTONS
@@ -767,6 +866,19 @@ class SettingsPage(ctk.CTkFrame):
             #print("error")
             pass
 
+        try:
+            self.ninjabrain_path_entry.delete(0, "end")
+            self.ninjabrain_path_entry.insert(0, settings["ninja_path"])
+        except:
+            #print("error")
+            pass
+
+        try:
+            self.ninjabrain_dropdown.set(settings["ninja_auto_open"])
+        except:
+            #print("error")
+            pass
+
 
     def save_settings(self):
         config_dir = Path(user_config_dir(APP_NAME))
@@ -786,6 +898,8 @@ class SettingsPage(ctk.CTkFrame):
             "obs_server": self.websocket_server_entry.get(),
             "obs_auto_open": self.obs_dropdown.get(),
             "obs_path": self.obs_path_entry.get(),
+            "ninja_path": self.ninjabrain_path_entry.get(),
+            "ninja_auto_open": self.ninjabrain_dropdown.get(),
         }
 
         with settings_file.open("w", encoding="utf-8") as f:
@@ -856,7 +970,7 @@ class SettingsPage(ctk.CTkFrame):
         path = filedialog.askopenfilename(
             parent=self.master,
             initialdir=directory,
-            title="Load Settings",
+            title="Pick OBS Shortcut",
             filetypes=[("Shortcut", "*.lnk"), ("All files", "*.*")]
         )
 
@@ -872,6 +986,13 @@ class SettingsPage(ctk.CTkFrame):
             self.mc_path_entry.delete(0, "end")
             self.mc_path_entry.insert(0, path)
 
+
+    def pick_ninja_dir(self):
+        directory = os.path.join(os.path.expanduser("~"), "Desktop")
+        path = filedialog.askopenfilename(parent=self.master,initialdir=directory,title="Pick Ninjabrain-Bot Shortcut",filetypes=[("JAR files", "*.jar"), ("All files", "*.*")])
+        if path:
+            self.ninjabrain_path_entry.delete(0, "end")
+            self.ninjabrain_path_entry.insert(0, path)
 
 
     def pick_recording_dir(self):

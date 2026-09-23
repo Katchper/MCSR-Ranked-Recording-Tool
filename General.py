@@ -130,6 +130,8 @@ def checkGameStatus():
 #  api_pass
 #  "obs_auto_open"
 #  "obs_path"
+#   ninjabrain_dropdown
+#   ninjabrain_path_entry
 
 def loadSettings():
     settings = ""
@@ -328,5 +330,25 @@ def obs_is_running():
         text=True
     )
     return "obs64.exe" in result.stdout
+
+
+def ninja_is_running():
+    settings = loadSettings()
+    ninjabrain_name = os.path.basename(settings["ninja_path"])
+    result = subprocess.run(
+        [
+            "powershell",
+            "-Command",
+            "Get-CimInstance Win32_Process -Filter \"Name = 'javaw.exe'\" | "
+            "Select-Object -ExpandProperty CommandLine"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    return str(ninjabrain_name) in result.stdout
+
+#print(ninja_is_running())
+
 
 #print(obs_is_running())
