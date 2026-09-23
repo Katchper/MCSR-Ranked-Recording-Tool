@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements.">
+    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="Fixed Bug when seed changing&#10;&#10;Fixed bug when entering settings and exiting.&#10;&#10;Added more File Name logic for when the recording is stopped early, or a seed change happens.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/General.py" beforeDir="false" afterPath="$PROJECT_DIR$/General.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +162,15 @@
       <option name="project" value="LOCAL" />
       <updated>1790099302696</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fixed Bug when seed changing&#10;&#10;Fixed bug when entering settings and exiting.&#10;&#10;Added more File Name logic for when the recording is stopped early, or a seed change happens.">
+      <option name="closed" value="true" />
+      <created>1790191458738</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1790191458738</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -193,6 +200,7 @@
     <MESSAGE value="icon" />
     <MESSAGE value="Completed Initial Version. Tested and basic functionality confirmed" />
     <MESSAGE value="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements." />
-    <option name="LAST_COMMIT_MESSAGE" value="changed how the icon is displayed to build it into the .exe. also commented any remaining print statements." />
+    <MESSAGE value="Fixed Bug when seed changing&#10;&#10;Fixed bug when entering settings and exiting.&#10;&#10;Added more File Name logic for when the recording is stopped early, or a seed change happens." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Bug when seed changing&#10;&#10;Fixed bug when entering settings and exiting.&#10;&#10;Added more File Name logic for when the recording is stopped early, or a seed change happens." />
   </component>
 </project>

@@ -186,11 +186,11 @@ def rename_latest_recording(seed_change_flag):
         winner, finaltime, seed = checkGameStatus()
     elif seed_change_flag == 1:
         winner = 4
-        finaltime = "111.111"
+        finaltime = datetime.now().strftime("%H.%M.%S")
         seed = "SeedChanged"
     elif seed_change_flag == 2:
         winner = 4
-        finaltime = "111.111"
+        finaltime = datetime.now().strftime("%H.%M.%S")
         seed = "AppClosed"
     #print(finaltime)
     settings = loadSettings()
