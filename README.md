@@ -1,12 +1,12 @@
-# MCSR Recording Tool Version 1.0
+# MCSR Ranked Recording Tool Version 1.0
 
-A tool for automatically starting and stopping recordings for MCSR games.
+A tool for automatically starting and stopping recordings for MCSR Ranked games.
 
 The tool removes the need to manually manage recordings and makes it easier to organise and manage your gameplay footage.
 
 ## Features
 
-- 🎥 Automatically starts recording when an MCSR game begins
+- 🎥 Automatically starts recording when an MCSR Ranked game begins
 - ⏹️ Automatically stops recording when the game ends
 - 📁 Automatically organises recorded videos
 - 🏷️ Automatically generates video titles
@@ -28,30 +28,33 @@ Download the latest `.exe` from the **Releases** page.
 
 ### 2. Open the App
 
-Launch `MCSR Recording Tool.exe`.
+Launch `MCSR Ranked Recording Tool.exe`.
 
 ### 3. Configure Settings
 
 Open the **Settings** page and configure all settings:
 
 - Minecraft Username
-- Minecraft Log Directory (Will attempt to auto locate)
+- Minecraft Log Directory
+    (Will attempt to auto locate example being: `C:\Users\YourUser\AppData\Roaming\PrismLauncher\instances\MCSRRanked\minecraft\logs`)
 - Video Sorting
 - Video Output Directory
-- OBS Websocket settings
-- Auto Open OBS (When start is pressed)
-- OBS link directory (needs to be mapped to a .lnk)
-- 
+    (default in OBS being `C:/Users/YourUser/Videos`)
+- OBS Websocket settings (port, server, password which can be found in obs under tools > websocket server settings)
+- Auto Open OBS (When start button is pressed - it will check if already open)
+- OBS link directory
+    (needs to be mapped to a .lnk program opens start menu by default example being `C:/ProgramData/Microsoft/Windows/Start Menu/Programs/OBS Studio.lnk`)
+  
 - API Key **CAN BE IGNORED*
 ### 4. Save Your Settings
 
-Click **Save** to save your configuration.
+Click **Save** to save your configuration. I would highly recommend restarting the recording tool after this step currently.
 
 ### 5. Start Recording
 
 Press **Start**.
 
-The tool will monitor your MCSR game and automatically manage the recording.
+The tool will monitor your MCSR Ranked game and automatically manage the recording.
 
 ## Video Organisation
 
