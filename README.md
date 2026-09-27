@@ -68,3 +68,10 @@ Recordings/
 │    ├── 2026-09-22/
 │    │   └──  11-38 - Desert Temple.mp4
 │    │   └── ...
+
+```
+
+Manual Installation:
+
+If you would like to manually compile the .exe from the source the command i use is:
+pyinstaller --onefile --windowed --icon=Icon.ico --add-data "Icon.ico;." Menu.py
