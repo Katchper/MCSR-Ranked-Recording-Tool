@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="cleaned up the method names and class names." />
+    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="added multiple video support">
+      <change afterPath="$PROJECT_DIR$/Icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General.py" beforeDir="false" afterPath="$PROJECT_DIR$/General.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,6 +64,11 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Katch/Desktop/Project/MCSR-Recording-Tool&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Katch\Desktop\Project\MCSR-Recording-Tool" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Menu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="MCSR Recording" />
@@ -191,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1790521948912</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="added multiple video support">
+      <option name="closed" value="true" />
+      <created>1790522254904</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1790522254904</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -225,6 +243,7 @@
     <MESSAGE value="Fixed issue when filename is the same for incomplete games." />
     <MESSAGE value="Added New Setting to Auto Open Ninjabrain-Bot" />
     <MESSAGE value="cleaned up the method names and class names." />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaned up the method names and class names." />
+    <MESSAGE value="added multiple video support" />
+    <option name="LAST_COMMIT_MESSAGE" value="added multiple video support" />
   </component>
 </project>

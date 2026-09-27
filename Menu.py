@@ -1,5 +1,6 @@
 import sys
 import threading
+import tkinter as tk
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -10,7 +11,7 @@ from General import *
 APP_NAME = "MCSRRecordingTool"
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
-
+REQUIRED_SETTINGS = {"username", "mc_path", "video_path", "obs_port", "obs_server","obs_pass"}
 
 class App(ctk.CTk):
     def __init__(self):
@@ -22,8 +23,9 @@ class App(ctk.CTk):
         self.geometry("520x420")
         self.watcher_running = False
         self.obs_recording = False
-        self.iconbitmap(self.resource_path("Icon.ico"))
         self.resizable(False, False)
+
+        self.ready_to_start = False
 
         threading.Thread(
             target=self.watch_log,
@@ -47,10 +49,19 @@ class App(ctk.CTk):
             p.grid(row=0, column=0, sticky="nsew")
 
         self.show_page("menu")
+        self.after(200, lambda: self.iconbitmap(self.resource_path("Icon.ico")))
+
+    ## resource path method written by claude
 
     def resource_path(self, filename):
         if getattr(sys, "frozen", False):
-            return os.path.join(sys._MEIPASS, filename)
+            src = os.path.join(sys._MEIPASS, filename)
+            dst_dir = os.path.join(os.getenv("LOCALAPPDATA"), APP_NAME)
+            os.makedirs(dst_dir, exist_ok=True)
+            dst = os.path.join(dst_dir, filename)
+            if not os.path.exists(dst):
+                shutil.copy2(src, dst)
+            return dst
         return os.path.join(os.path.dirname(__file__), filename)
 
     def show_page(self, name):
@@ -75,41 +86,67 @@ class App(ctk.CTk):
         self.destroy()
 
     def watch_log(self):
-     #   try:
         seed_change_flag = 0
-        settings = load_settings()
-        log_path = os.path.join(settings["mc_path"], "latest.log")  # latest.log
 
-        with open(log_path, "r", encoding="utf-8", errors="replace") as f:
-            # Ignore existing contents
-            f.seek(0, 2)
 
-            while True:
-                #print(seed_change_flag)
-                line = f.readline()
+        ## Sanity check for settings as well as latest.log directory before starting the loop.
 
-                if not line:
-                    time.sleep(0.25)
-                    continue
+        while not self.ready_to_start:
+            settings = load_settings()
+            try:
+                missing = settings_validation(REQUIRED_SETTINGS)
+                if missing:
+                    raise ValueError(f"missing settings: {missing}")
 
-                # Watcher disabled?
-                if not self.watcher_running:
-                    continue
+            except:
+                print("settings not found, sleeping for 1 second before retrying")
+                time.sleep(2)
+                continue
 
-                line = line.strip()
 
-                record_status = read_log_line(line)
-                #print(record_status)
+            try:
 
-                if record_status == 3:
-                    seed_change_flag = 1
+                log_path = os.path.join(settings["mc_path"], "latest.log")
 
-                if record_status == 1:
-                    self.start_recording()
+                with open(log_path, "r", encoding="utf-8", errors="replace") as f:
+                    # Ignore existing contents
+                    f.seek(0, 2)
+                    self.ready_to_start = True
+                    print("log file found")
 
-                elif record_status == 2:
-                    self.stop_recording(seed_change_flag)
-                    seed_change_flag = 0
+                    while True:
+                        # print(seed_change_flag)
+                        line = f.readline()
+
+                        if not line:
+                            time.sleep(0.25)
+                            continue
+
+                        # Watcher disabled?
+                        if not self.watcher_running:
+                            continue
+
+                        line = line.strip()
+
+                        record_status = read_log_line(line)
+                        # print(record_status)
+
+                        if record_status == 3:
+                            seed_change_flag = 1
+
+                        if record_status == 1:
+                            self.start_recording()
+
+                        elif record_status == 2:
+                            self.stop_recording(seed_change_flag)
+                            seed_change_flag = 0
+
+            except:
+                print("latest.log not found, sleeping for 1 second before retrying")
+                time.sleep(2)
+                continue
+
+
        # except:
        #     print("Log file not found.")
        #     pass
@@ -124,7 +161,7 @@ class App(ctk.CTk):
                 port=settings["obs_port"],
                 password=settings["obs_pass"]
             )
-            #print("Connected to OBS")
+            print("Connected to OBS")
             #print(self.obs)
         
 
@@ -135,21 +172,21 @@ class App(ctk.CTk):
         if not self.obs_recording:
             self.obs.start_record()
             self.obs_recording = True
-            #print("Recording started")
+            print("Recording started")
 
     def stop_recording(self, seed_change_flag):
         if self.obs_recording:
             self.obs.stop_record()
             self.obs_recording = False
+            print("Recording stopped")
             self.disconnect_obs()
             rename_latest_recording(seed_change_flag)
-            #("Recording stopped")
 
     def disconnect_obs(self):
         if self.obs is not None:
             self.obs.disconnect()
             self.obs = None
-            #print("Disconnected from OBS")
+            print("Disconnected from OBS")
             #print(self.obs)
 
 '''
@@ -199,21 +236,33 @@ class MainMenu(ctk.CTkFrame):
             command=self.settings_nav,
         ).pack(pady=20)
 
+        self.info_label = ctk.CTkLabel(
+            self,
+            text="",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            wraplength=400,
+        )
+        self.info_label.pack(pady=20)
+
     def settings_nav(self):
         if self.app.watcher_running:
             self.toggle_watcher()
             app.stop_recording(2)
+            self.info_label.configure(text="")
         app.show_page("settings")
 
     def toggle_watcher(self):
         settings = load_settings()
         self.app.watcher_running = not self.app.watcher_running
 
-        if "Yes" in str(settings["obs_auto_open"]) and self.app.watcher_running:
+        check_obs = settings_validation("obs_auto_open")
+        check_ninja = settings_validation("ninja_auto_open")
+
+        if not check_obs and "Yes" in str(settings["obs_auto_open"]) and self.app.watcher_running:
             if not obs_is_running():
                 subprocess.Popen(settings["obs_path"], shell=True)
 
-        if "Yes" in str(settings["ninja_auto_open"]) and self.app.watcher_running:
+        if not check_ninja and "Yes" in str(settings["ninja_auto_open"]) and self.app.watcher_running:
             if not ninja_is_running():
                 subprocess.Popen(settings["ninja_path"], shell=True)
 
@@ -221,13 +270,21 @@ class MainMenu(ctk.CTkFrame):
             app.stop_recording(2)
 
         try:
-            if "username" in settings:
+            missing = settings_validation(REQUIRED_SETTINGS)
+            print(missing)
+            if not missing:
                 if self.app.watcher_running:
                     self.start_btn.configure(text="Stop", fg_color="#44a334",hover_color="#307224")
                 else:
                     self.start_btn.configure(text="Start", fg_color="#c84d44",hover_color="#9c3d37")
+                self.info_label.configure(text="")
+            else:
+                self.info_label.configure(text="missing settings"+str(missing))
+
         except:
+            missing = settings_validation(REQUIRED_SETTINGS)
             self.app.watcher_running = not self.app.watcher_running
+            self.info_label.configure(text="missing settings"+str(missing))
 
 
 """

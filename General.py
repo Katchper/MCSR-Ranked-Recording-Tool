@@ -22,6 +22,7 @@ APP_NAME = "MCSRRecordingTool"
 # - No folders containing MCSR > Returns Prism Launmcher instances path
 # - else return APPDATA FOLDER
 
+VIDEO_EXTS = (".mp4", ".mov", ".avi", ".mkv", ".ts", ".flv")
 
 def find_mc_path():
     appdata = os.getenv("APPDATA")
@@ -133,7 +134,7 @@ def check_game_status():
 #   ninjabrain_path_entry
 
 def load_settings():
-    settings = ""
+    settings = {}
     config_dir = Path(user_config_dir(APP_NAME))
     config_dir.mkdir(parents=True, exist_ok=True)
     settings_file = config_dir / "settings.json"
@@ -145,10 +146,22 @@ def load_settings():
         settings["api_pass"] = keyring.get_password(APP_NAME, "API")
 
     except:
-        #print("settings file not found")
+        print("settings file not found")
         pass
 
     return settings
+
+
+## test settings method, returns the missing ones
+# required is passed through as a list of json variable names eg: ("username", "uuid"..)
+
+def settings_validation(required):
+    settings = load_settings()
+    print(settings)
+    missing = required - settings.keys()
+    return missing
+
+
 
 # reads a line of a log file
 # 0 = skip
@@ -254,8 +267,6 @@ def wait_for_file_release(path1, recording_path, timeout=10):
     # iterate over all videos moving them accordingly.
 
 def sort_recordings(recording_path):
-
-    VIDEO_EXTS = (".mp4", ".mov", ".avi", ".mkv", ".ts", ".flv")
 
     #print("Sorting recordings...")
     recordings_path = recording_path
