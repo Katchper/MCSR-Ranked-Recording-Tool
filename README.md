@@ -36,12 +36,12 @@ Open the **Settings** page and configure General and OBS settings:
 
 - Minecraft Username
 - Minecraft Log Directory
-    (Requires the folder containing logs.latest for the mcsr ranked instance, example being: `C:\Users\YourUser\AppData\Roaming\PrismLauncher\instances\MCSRRanked\minecraft\logs`)
+    (Requires the folder containing latest.log file for the mcsr ranked instance, example being: `C:\Users\YourUser\AppData\Roaming\PrismLauncher\instances\MCSRRanked\minecraft\logs`)
 - Video Sorting
 - Video Output Directory
     (default in OBS being `C:/Users/YourUser/Videos`)
 - OBS Websocket settings (port, server, password which can be found in obs under tools > websocket server settings)
-- Auto Open OBS (When start button is pressed, it will check if already open)
+- Auto Open OBS (Opens when start button is pressed, it will check if already open)
 - OBS link directory
     (needs to be mapped to a .lnk program opens start menu by default example being `C:/ProgramData/Microsoft/Windows/Start Menu/Programs/OBS Studio.lnk`)
   
