@@ -146,7 +146,7 @@ def load_settings():
         settings["api_pass"] = keyring.get_password(APP_NAME, "API")
 
     except:
-        print("settings file not found")
+        #print("settings file not found")
         pass
 
     return settings
@@ -157,7 +157,7 @@ def load_settings():
 
 def settings_validation(required):
     settings = load_settings()
-    print(settings)
+    #print(settings)
     missing = required - settings.keys()
     return missing
 
@@ -213,19 +213,20 @@ def rename_latest_recording(seed_change_flag):
 
     recordings_path = settings["video_path"]  # folder path
 
-    files = [f for f in os.listdir(recordings_path) if f.endswith(".mp4")]
+    files = [f for f in os.listdir(recordings_path) if f.endswith(VIDEO_EXTS)]
     latest_file = max(
         files,
         key=lambda f: os.path.getctime(os.path.join(recordings_path, f))
     )
+    root, ext = os.path.splitext(latest_file)
     if winner == 1:
-        new_name = f"Won_{seed}_{finaltime}.mp4"
+        new_name = f"Won_{seed}_{finaltime}{str(ext)}"
     elif winner == 2:
-        new_name = f"Won_FF_{seed}_{finaltime}.mp4"
+        new_name = f"Won_FF_{seed}_{finaltime}{str(ext)}"
     elif winner == 3:
-        new_name = f"Lost_{seed}_{finaltime}.mp4"
+        new_name = f"Lost_{seed}_{finaltime}{str(ext)}"
     else:
-        new_name = f"Incomplete_{seed}_{finaltime}.mp4"
+        new_name = f"Incomplete_{seed}_{finaltime}{str(ext)}"
 
     latest_file = os.path.join(recordings_path, latest_file)
     new_name = os.path.join(recordings_path, new_name)

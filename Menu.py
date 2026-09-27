@@ -99,7 +99,7 @@ class App(ctk.CTk):
                     raise ValueError(f"missing settings: {missing}")
 
             except:
-                print("settings not found, sleeping for 1 second before retrying")
+                #print("settings not found, sleeping for 1 second before retrying")
                 time.sleep(2)
                 continue
 
@@ -112,37 +112,39 @@ class App(ctk.CTk):
                     # Ignore existing contents
                     f.seek(0, 2)
                     self.ready_to_start = True
-                    print("log file found")
+                    #print("log file found")
+                    if self.ready_to_start:
+                        while True:
+                            #print("loopy")
+                            # print(seed_change_flag)
+                            line = f.readline()
 
-                    while True:
-                        # print(seed_change_flag)
-                        line = f.readline()
+                            if not line:
+                                time.sleep(0.25)
+                                #print("sleeping")
+                                continue
 
-                        if not line:
-                            time.sleep(0.25)
-                            continue
+                            # Watcher disabled?
+                            if not self.watcher_running:
+                                #print("watcher not running")
+                                continue
+                            line = line.strip()
 
-                        # Watcher disabled?
-                        if not self.watcher_running:
-                            continue
+                            record_status = read_log_line(line)
+                            #print(record_status)
 
-                        line = line.strip()
+                            if record_status == 3:
+                                seed_change_flag = 1
 
-                        record_status = read_log_line(line)
-                        # print(record_status)
+                            if record_status == 1:
+                                self.start_recording()
 
-                        if record_status == 3:
-                            seed_change_flag = 1
-
-                        if record_status == 1:
-                            self.start_recording()
-
-                        elif record_status == 2:
-                            self.stop_recording(seed_change_flag)
-                            seed_change_flag = 0
+                            elif record_status == 2:
+                                self.stop_recording(seed_change_flag)
+                                seed_change_flag = 0
 
             except:
-                print("latest.log not found, sleeping for 1 second before retrying")
+                #print("latest.log not found, sleeping for 1 second before retrying")
                 time.sleep(2)
                 continue
 
@@ -161,7 +163,7 @@ class App(ctk.CTk):
                 port=settings["obs_port"],
                 password=settings["obs_pass"]
             )
-            print("Connected to OBS")
+            #print("Connected to OBS")
             #print(self.obs)
         
 
@@ -172,13 +174,13 @@ class App(ctk.CTk):
         if not self.obs_recording:
             self.obs.start_record()
             self.obs_recording = True
-            print("Recording started")
+            #print("Recording started")
 
     def stop_recording(self, seed_change_flag):
         if self.obs_recording:
             self.obs.stop_record()
             self.obs_recording = False
-            print("Recording stopped")
+            #print("Recording stopped")
             self.disconnect_obs()
             rename_latest_recording(seed_change_flag)
 
@@ -186,7 +188,7 @@ class App(ctk.CTk):
         if self.obs is not None:
             self.obs.disconnect()
             self.obs = None
-            print("Disconnected from OBS")
+            #print("Disconnected from OBS")
             #print(self.obs)
 
 '''
@@ -255,9 +257,10 @@ class MainMenu(ctk.CTkFrame):
         settings = load_settings()
         self.app.watcher_running = not self.app.watcher_running
 
-        check_obs = settings_validation("obs_auto_open")
-        check_ninja = settings_validation("ninja_auto_open")
-
+        check_obs = settings_validation({"obs_auto_open"})
+        #print("obs_auto_open", check_obs)
+        check_ninja = settings_validation({"ninja_auto_open"})
+        #print("check_ninja", check_ninja)
         if not check_obs and "Yes" in str(settings["obs_auto_open"]) and self.app.watcher_running:
             if not obs_is_running():
                 subprocess.Popen(settings["obs_path"], shell=True)
@@ -271,7 +274,7 @@ class MainMenu(ctk.CTkFrame):
 
         try:
             missing = settings_validation(REQUIRED_SETTINGS)
-            print(missing)
+            #print(missing)
             if not missing:
                 if self.app.watcher_running:
                     self.start_btn.configure(text="Stop", fg_color="#44a334",hover_color="#307224")
