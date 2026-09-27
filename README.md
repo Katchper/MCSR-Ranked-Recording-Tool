@@ -36,7 +36,7 @@ Open the **Settings** page and configure General and OBS settings:
 
 - Minecraft Username
 - Minecraft Log Directory
-    (Will attempt to auto locate example being: `C:\Users\YourUser\AppData\Roaming\PrismLauncher\instances\MCSRRanked\minecraft\logs`)
+    (Requires the folder containing logs.latest for the mcsr ranked instance, example being: `C:\Users\YourUser\AppData\Roaming\PrismLauncher\instances\MCSRRanked\minecraft\logs`)
 - Video Sorting
 - Video Output Directory
     (default in OBS being `C:/Users/YourUser/Videos`)
