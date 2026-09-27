@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="Added New Setting to Auto Open Ninjabrain-Bot">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/General.py" beforeDir="false" afterPath="$PROJECT_DIR$/General.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
-    </list>
+    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="cleaned up the method names and class names." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -189,7 +183,15 @@
       <option name="project" value="LOCAL" />
       <updated>1790199181564</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="cleaned up the method names and class names.">
+      <option name="closed" value="true" />
+      <created>1790521948912</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1790521948912</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -222,6 +224,7 @@
     <MESSAGE value="Fixed Bug when seed changing&#10;&#10;Fixed bug when entering settings and exiting.&#10;&#10;Added more File Name logic for when the recording is stopped early, or a seed change happens." />
     <MESSAGE value="Fixed issue when filename is the same for incomplete games." />
     <MESSAGE value="Added New Setting to Auto Open Ninjabrain-Bot" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added New Setting to Auto Open Ninjabrain-Bot" />
+    <MESSAGE value="cleaned up the method names and class names." />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaned up the method names and class names." />
   </component>
 </project>

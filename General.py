@@ -255,6 +255,8 @@ def wait_for_file_release(path1, recording_path, timeout=10):
 
 def sort_recordings(recording_path):
 
+    VIDEO_EXTS = (".mp4", ".mov", ".avi", ".mkv", ".ts", ".flv")
+
     #print("Sorting recordings...")
     recordings_path = recording_path
 
@@ -275,7 +277,7 @@ def sort_recordings(recording_path):
         #print(f)
         if os.path.isfile(video_path):
             #print("ISFILE")
-            if f.endswith(".mp4"):
+            if f.endswith(VIDEO_EXTS):
 
                 match = re.search(r"\d+.\d+", f)
                 #print(match)
