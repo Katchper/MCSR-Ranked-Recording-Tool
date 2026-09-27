@@ -77,7 +77,7 @@ class App(ctk.CTk):
     def watch_log(self):
      #   try:
         seed_change_flag = 0
-        settings = loadSettings()
+        settings = load_settings()
         log_path = os.path.join(settings["mc_path"], "latest.log")  # latest.log
 
         with open(log_path, "r", encoding="utf-8", errors="replace") as f:
@@ -98,7 +98,7 @@ class App(ctk.CTk):
 
                 line = line.strip()
 
-                record_status = readLogLine(line)
+                record_status = read_log_line(line)
                 #print(record_status)
 
                 if record_status == 3:
@@ -115,9 +115,9 @@ class App(ctk.CTk):
        #     pass
 
 
-    def connectOBS(self):
+    def connect_obs(self):
         if self.obs is None:
-            settings = loadSettings()
+            settings = load_settings()
 
             self.obs = ReqClient(
                 host=settings["obs_server"],
@@ -130,7 +130,7 @@ class App(ctk.CTk):
 
     def start_recording(self):
         if self.obs is None:
-            self.connectOBS()
+            self.connect_obs()
 
         if not self.obs_recording:
             self.obs.start_record()
@@ -141,11 +141,11 @@ class App(ctk.CTk):
         if self.obs_recording:
             self.obs.stop_record()
             self.obs_recording = False
-            self.disconnectOBS()
+            self.disconnect_obs()
             rename_latest_recording(seed_change_flag)
             #("Recording stopped")
 
-    def disconnectOBS(self):
+    def disconnect_obs(self):
         if self.obs is not None:
             self.obs.disconnect()
             self.obs = None
@@ -196,17 +196,17 @@ class MainMenu(ctk.CTkFrame):
             width=150,
             height=50,
             text="Settings",
-            command=self.settingsNav,
+            command=self.settings_nav,
         ).pack(pady=20)
 
-    def settingsNav(self):
+    def settings_nav(self):
         if self.app.watcher_running:
             self.toggle_watcher()
             app.stop_recording(2)
         app.show_page("settings")
 
     def toggle_watcher(self):
-        settings = loadSettings()
+        settings = load_settings()
         self.app.watcher_running = not self.app.watcher_running
 
         if "Yes" in str(settings["obs_auto_open"]) and self.app.watcher_running:
@@ -605,7 +605,7 @@ class SettingsPage(ctk.CTkFrame):
             fg_color="#1d6866",
             hover_color="#174f4e",
             text="Test",
-            command=self.testAPI
+            command=self.test_api
         )
 
         self.test_api_button.grid(
@@ -889,7 +889,7 @@ class SettingsPage(ctk.CTkFrame):
 
         settings = {
             "username": self.username_entry.get(),
-            "uuid": getUUID(self.username_entry.get()),
+            "uuid": get_uuid(self.username_entry.get()),
             "mc_path": self.mc_path_entry.get(),
             "video_sort": self.mode_dropdown.get(),
 
@@ -980,7 +980,7 @@ class SettingsPage(ctk.CTkFrame):
 
 
     def pick_dir(self):
-        directory = findMCPath()
+        directory = find_mc_path()
         path = filedialog.askdirectory(parent=self.master,initialdir=directory)
         if path:
             self.mc_path_entry.delete(0, "end")
@@ -1003,7 +1003,7 @@ class SettingsPage(ctk.CTkFrame):
             self.video_path_entry.insert(0, path)
 
 
-    def testAPI(self):
+    def test_api(self):
         response = requests.get("https://api.mcsrranked.com/users/katchper/matches")
         #print(response.status_code)
         if response.status_code == 200:

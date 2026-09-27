@@ -6,7 +6,6 @@ import keyring
 import requests
 import json
 from platformdirs import user_config_dir
-from datetime import date, timedelta
 from pathlib import Path
 from datetime import datetime
 import time
@@ -24,7 +23,7 @@ APP_NAME = "MCSRRecordingTool"
 # - else return APPDATA FOLDER
 
 
-def findMCPath():
+def find_mc_path():
     appdata = os.getenv("APPDATA")
     #print(appdata)
     AppDataPath = appdata + r"\PrismLauncher\instances"
@@ -57,7 +56,7 @@ def findMCPath():
 # Call to retrieve the UUID of the player, needed to identify the winner of a game
 
 
-def getUUID(username):
+def get_uuid(username):
     uuid = ""
     response = requests.get(
         f"https://api.mojang.com/users/profiles/minecraft/{username}"
@@ -77,8 +76,8 @@ def getUUID(username):
 # 2 = you by forfeit
 # 3 = opponent
 
-def checkGameStatus():
-    settings = loadSettings()
+def check_game_status():
+    settings = load_settings()
 
     finalTime = "111.111"
     winner = 0
@@ -104,7 +103,7 @@ def checkGameStatus():
         finalTime = f"{minute}.{second}"
 
 
-        settings = loadSettings()
+        settings = load_settings()
 
         if str(winner_player) != "None":
             if settings["uuid"] == str(winner_player):
@@ -133,7 +132,7 @@ def checkGameStatus():
 #   ninjabrain_dropdown
 #   ninjabrain_path_entry
 
-def loadSettings():
+def load_settings():
     settings = ""
     config_dir = Path(user_config_dir(APP_NAME))
     config_dir.mkdir(parents=True, exist_ok=True)
@@ -156,7 +155,7 @@ def loadSettings():
 # 1 = start recording
 # 2 = stop recording
 # 3 = seed change flag
-def readLogLine(line):
+def read_log_line(line):
     result = 0
 
     if (
@@ -184,8 +183,10 @@ def readLogLine(line):
 
 
 def rename_latest_recording(seed_change_flag):
+    global winner, seed, finaltime
+
     if seed_change_flag == 0:
-        winner, finaltime, seed = checkGameStatus()
+        winner, finaltime, seed = check_game_status()
     elif seed_change_flag == 1:
         winner = 4
         finaltime = datetime.now().strftime("%H.%M.%S")
@@ -195,7 +196,7 @@ def rename_latest_recording(seed_change_flag):
         finaltime = datetime.now().strftime("%H.%M.%S")
         seed = "AppClosed"
     #print(finaltime)
-    settings = loadSettings()
+    settings = load_settings()
 
     recordings_path = settings["video_path"]  # folder path
 
@@ -244,15 +245,15 @@ def wait_for_file_release(path1, recording_path, timeout=10):
             time.sleep(0.2)
     return False
 
-
-def sort_recordings(recording_path):
-    # OPEN RECORDINGS FOLDER -
+# OPEN RECORDINGS FOLDER -
     # READ WHAT FILES ARE THERE
-    # IF video FILE NAME DOES NOT COMTAIN - COMPLETE - >  delete if older than x days long (default = 3)
+    # XXXX (Not current) - IF video FILE NAME DOES NOT COMTAIN - COMPLETE - >  delete if older than x days long (default = 3)
     # check the file names
     # use regex or string eval to check for date in the video file name
     # for remaining videos, check if a folder for the date exists else, create a folder for the date
     # iterate over all videos moving them accordingly.
+
+def sort_recordings(recording_path):
 
     #print("Sorting recordings...")
     recordings_path = recording_path
@@ -333,7 +334,7 @@ def obs_is_running():
 
 
 def ninja_is_running():
-    settings = loadSettings()
+    settings = load_settings()
     ninjabrain_name = os.path.basename(settings["ninja_path"])
     result = subprocess.run(
         [
