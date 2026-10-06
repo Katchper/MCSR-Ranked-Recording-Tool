@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="updated how the icon is displayed.&#10;&#10;also added some safeguards for when minecraft log is missing or when the settings are incomplete. added visual aids to show user what settings are missing">
+    <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="Adding CLI arguments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/General.py" beforeDir="false" afterPath="$PROJECT_DIR$/General.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Args.py" beforeDir="false" afterPath="$PROJECT_DIR$/Args.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -216,7 +216,23 @@
       <option name="project" value="LOCAL" />
       <updated>1790528504255</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Added Window Resizing Capabilites with a scroll bar in the settings page">
+      <option name="closed" value="true" />
+      <created>1791296892870</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1791296892870</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Adding CLI arguments">
+      <option name="closed" value="true" />
+      <created>1791297679489</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1791297679489</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -252,6 +268,8 @@
     <MESSAGE value="cleaned up the method names and class names." />
     <MESSAGE value="added multiple video support" />
     <MESSAGE value="updated how the icon is displayed.&#10;&#10;also added some safeguards for when minecraft log is missing or when the settings are incomplete. added visual aids to show user what settings are missing" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated how the icon is displayed.&#10;&#10;also added some safeguards for when minecraft log is missing or when the settings are incomplete. added visual aids to show user what settings are missing" />
+    <MESSAGE value="Added Window Resizing Capabilites with a scroll bar in the settings page" />
+    <MESSAGE value="Adding CLI arguments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding CLI arguments" />
   </component>
 </project>

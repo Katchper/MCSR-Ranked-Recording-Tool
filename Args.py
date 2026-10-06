@@ -7,7 +7,7 @@ def check_args():
 
     parser.add_argument(
         "--autostart",
-        action="autostart",
+        action="store_true",
     )
 
     args = parser.parse_args()
