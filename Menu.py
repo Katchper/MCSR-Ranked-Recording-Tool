@@ -6,6 +6,7 @@ from tkinter import filedialog
 import customtkinter as ctk
 from obsws_python import ReqClient
 
+from Args import check_args
 from General import *
 
 APP_NAME = "MCSRRecordingTool"
@@ -204,6 +205,7 @@ ALSO CONTAINS SETTING BUTTON
 
 class MainMenu(ctk.CTkFrame):
     def __init__(self, parent, app):
+        checked_args = False
         super().__init__(parent)
         self.app = app
 
@@ -255,6 +257,10 @@ class MainMenu(ctk.CTkFrame):
             #wraplength=400,
         )
         self.info_label.pack(pady=20)
+
+        if check_args() and not checked_args:
+            self.toggle_watcher()
+            self.checked_args = True
 
 
     def settings_nav(self):
