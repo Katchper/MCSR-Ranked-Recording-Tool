@@ -23,7 +23,7 @@ class App(ctk.CTk):
         self.geometry("520x420")
         self.watcher_running = False
         self.obs_recording = False
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         self.ready_to_start = False
 
@@ -66,14 +66,16 @@ class App(ctk.CTk):
 
     def show_page(self, name):
         if name == "settings":
-            self.minsize(500, 900)
+            self.geometry("700x900")
+            #self.configure(width=500, height=900)
             self.watcher_running = False
             self.stop_recording(2)
             #print(self.watcher_running)
             #print(self.watcher_running)
         else:
-            self.minsize(450, 300)
-
+            #self.minsize(450, 300)
+            self.geometry("550x400")
+            #self.configure(width=450, height=300)
         self.pages[name].tkraise()
 
     def on_close(self):
@@ -205,15 +207,23 @@ class MainMenu(ctk.CTkFrame):
         super().__init__(parent)
         self.app = app
 
+        general_frame2 = ctk.CTkFrame(self)
+        general_frame2.pack(
+            fill="x",
+            padx=20,
+            pady=10
+        )
+
+
         ctk.CTkLabel(
-            self,
+            general_frame2,
             text="MCSR Ranked Recording Tool",
             font=ctk.CTkFont(size=26, weight="bold")
         ).pack(pady=(60, 30))
 
         # START BUTTON
         self.start_btn = ctk.CTkButton(
-            self,
+            general_frame2,
             fg_color="#c84d44",
             hover_color="#9c3d37",
             # #349136FF for green #276A28FF for green hover
@@ -229,7 +239,7 @@ class MainMenu(ctk.CTkFrame):
         # SETTINGS BUTTON
 
         ctk.CTkButton(
-            self,
+            general_frame2,
             fg_color="#136462",
             hover_color="#0b3a39",
             width=150,
@@ -239,12 +249,13 @@ class MainMenu(ctk.CTkFrame):
         ).pack(pady=20)
 
         self.info_label = ctk.CTkLabel(
-            self,
+            general_frame2,
             text="",
             font=ctk.CTkFont(size=12, weight="bold"),
-            wraplength=400,
+            #wraplength=400,
         )
         self.info_label.pack(pady=20)
+
 
     def settings_nav(self):
         if self.app.watcher_running:
@@ -302,7 +313,10 @@ class SettingsPage(ctk.CTkFrame):
         # GENERAL SETTINGS
         # =========================
 
-        general_frame = ctk.CTkFrame(self)
+        self.scroll_frame = ctk.CTkScrollableFrame(self)
+        self.scroll_frame.pack(fill="both", expand=True, padx=0, pady=0)
+
+        general_frame = ctk.CTkFrame(self.scroll_frame)
         general_frame.pack(
             fill="x",
             padx=20,
@@ -417,7 +431,7 @@ class SettingsPage(ctk.CTkFrame):
         # RECORDING SETTINGS
         # =========================
 
-        recording_frame = ctk.CTkFrame(self)
+        recording_frame = ctk.CTkFrame(self.scroll_frame)
         recording_frame.pack(
             fill="x",
             padx=20,
@@ -612,7 +626,7 @@ class SettingsPage(ctk.CTkFrame):
         # API KEY
         # =========================
 
-        api_frame = ctk.CTkFrame(self)
+        api_frame = ctk.CTkFrame(self.scroll_frame)
         api_frame.pack(fill="x", padx=20, pady=10)
 
         ctk.CTkLabel(
@@ -678,7 +692,7 @@ class SettingsPage(ctk.CTkFrame):
         ## OTHER SETTINGS
         ## EG AUTO OPEN OTHER APPS, such as ninjabrain or so
 
-        other_frame = ctk.CTkFrame(self)
+        other_frame = ctk.CTkFrame(self.scroll_frame)
         other_frame.pack(
             fill="x",
             padx=20,
@@ -775,7 +789,7 @@ class SettingsPage(ctk.CTkFrame):
         # =========================
 
         import_export_frame = ctk.CTkFrame(
-            self,
+            self.scroll_frame,
             fg_color="transparent"
         )
 
@@ -812,7 +826,7 @@ class SettingsPage(ctk.CTkFrame):
         # =========================
 
         action_frame = ctk.CTkFrame(
-            self,
+            self.scroll_frame,
             fg_color="transparent"
         )
 

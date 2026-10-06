@@ -130,8 +130,8 @@ def check_game_status():
 #  api_pass
 #  "obs_auto_open"
 #  "obs_path"
-#   ninjabrain_dropdown
-#   ninjabrain_path_entry
+#  "ninjabrain_dropdown"
+#  "ninjabrain_path_entry"
 
 def load_settings():
     settings = {}
@@ -191,9 +191,11 @@ def read_log_line(line):
 
     return result
 
-# win, time = checkGameStatus()
 
-
+# Checks the seed_change_flag
+# if 0 = the game result is checked to determine the winner
+# if 1 = the recording is marked as a seed change
+# if 2 = the recording is marked as disrupted.
 
 def rename_latest_recording(seed_change_flag):
     global winner, seed, finaltime
