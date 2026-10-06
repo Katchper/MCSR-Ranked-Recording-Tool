@@ -1,4 +1,4 @@
-# MCSR Ranked Recording Tool Version 1.0
+# MCSR Ranked Recording Tool
 
 A tool for automatically starting and stopping recordings for MCSR Ranked games.
 
