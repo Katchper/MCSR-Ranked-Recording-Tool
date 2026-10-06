@@ -4,6 +4,7 @@ A tool for automatically starting and stopping recordings for MCSR Ranked games.
 
 The tool removes the need to manually manage recordings and makes it easier to organise and manage your gameplay footage.
 
+
 ## Features
 
 - 🎥 Automatically starts OBS recording when an MCSR Ranked game begins
@@ -12,7 +13,7 @@ The tool removes the need to manually manage recordings and makes it easier to o
 - 🏷️ Automatically generates video titles
 - 💾 Saves your settings between sessions and versions
 - 🔧 Supports OBS Studio
-
+  
 ## Requirements
 
 - Windows
@@ -20,7 +21,21 @@ The tool removes the need to manually manage recordings and makes it easier to o
 - Minecraft
 - MCSR Ranked
 
-## Quick Start Guide
+<br>
+
+
+## Manual Install Guide (For Building from Source)
+
+If you want to build the `.exe` yourself from the source code, use the following PyInstaller command:
+
+```bash
+pyinstaller --onefile --windowed --icon=Icon.ico --add-data "Icon.ico;." Menu.py
+```
+
+
+<br>
+
+# Quick Start Guide
 
 ### 1. Download the Executable
 
@@ -70,8 +85,3 @@ Recordings/
 │    │   └── ...
 
 ```
-
-Manual Installation:
-
-If you would like to manually compile the .exe from the source the command i use is:
-pyinstaller --onefile --windowed --icon=Icon.ico --add-data "Icon.ico;." Menu.py
