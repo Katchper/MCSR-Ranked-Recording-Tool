@@ -11,6 +11,9 @@ from datetime import datetime
 import time
 import shutil
 
+from Logging import write_to_logfile
+from Menu import logging_enabled
+
 APP_NAME = "MCSRRecordingTool"
 
 # Function to find the most suitable file path for the MCSR Logs Folder
@@ -25,6 +28,8 @@ APP_NAME = "MCSRRecordingTool"
 VIDEO_EXTS = (".mp4", ".mov", ".avi", ".mkv", ".ts", ".flv")
 
 def find_mc_path():
+    write_to_logfile(logging_enabled, "find_mc_path() Trying to Find Minecraft Path")
+
     appdata = os.getenv("APPDATA")
     #print(appdata)
     AppDataPath = appdata + r"\PrismLauncher\instances"
@@ -48,7 +53,8 @@ def find_mc_path():
             finalPath = AppDataPath
     else :
         finalPath = os.getenv("APPDATA")
-
+    write_to_logfile(logging_enabled, "find_mc_path() Path Located: " + finalPath)
+    return finalPath
     #print("Final path: ", finalPath)
     return finalPath
 
@@ -58,6 +64,7 @@ def find_mc_path():
 
 
 def get_uuid(username):
+    write_to_logfile(logging_enabled, "get_uuid() finding player UUID")
     uuid = ""
     response = requests.get(
         f"https://api.mojang.com/users/profiles/minecraft/{username}"
@@ -65,7 +72,9 @@ def get_uuid(username):
 
     if response.status_code == 200:
         uuid = response.json()["id"]
-
+        write_to_logfile(logging_enabled, "get_uuid() found player UUID")
+    else:
+        write_to_logfile(logging_enabled, "get_uuid() not found player UUID")
     return uuid
 
 
@@ -86,11 +95,11 @@ def check_game_status():
     params = {
         "count": 1
     }
-
+    write_to_logfile(logging_enabled, "check_game_status() Checking Completed Game Status For Renaming")
     response = requests.get("https://api.mcsrranked.com/users/"+settings["username"]+"/matches", params=params)
 
     if response.status_code == 200:
-
+        write_to_logfile(logging_enabled, "check_game_status() Found match data")
         match_result = response.json()
         timeVal = match_result["data"][0]["result"]["time"] / 1000
         winner_player = match_result["data"][0]["result"]["uuid"]
@@ -134,6 +143,7 @@ def check_game_status():
 #  "ninjabrain_path_entry"
 
 def load_settings():
+    write_to_logfile(logging_enabled, "load_settings() loading settings")
     settings = {}
     config_dir = Path(user_config_dir(APP_NAME))
     config_dir.mkdir(parents=True, exist_ok=True)
@@ -144,21 +154,38 @@ def load_settings():
 
         settings["obs_pass"] = keyring.get_password(APP_NAME, "OBSPASS")
         settings["api_pass"] = keyring.get_password(APP_NAME, "API")
-
+        write_to_logfile(logging_enabled, "load_settings() Settings Found")
     except:
+        write_to_logfile(logging_enabled, "load_settings() SETTINGS NOT FOUND")
         #print("settings file not found")
         pass
 
     return settings
 
 
+
+def is_logging_enabled():
+    settings = load_settings()
+    try:
+        value = settings["enable_logging"]
+        if value == "Yes":
+            return True
+        else:
+            return False
+    except:
+        return False
+
+
+
 ## test settings method, returns the missing ones
 # required is passed through as a list of json variable names eg: ("username", "uuid"..)
 
 def settings_validation(required):
+    write_to_logfile(logging_enabled, "settings_validation() Checking Required Settings")
     settings = load_settings()
     #print(settings)
     missing = required - settings.keys()
+    write_to_logfile(logging_enabled, "settings_validation() Missing Settings: " + str(missing))
     return missing
 
 
@@ -175,7 +202,7 @@ def read_log_line(line):
             "[WorldCreator] creating new queue" in line
     ):
         result = 1
-
+        write_to_logfile(logging_enabled, "read_log_line() Found Log Line to start recording")
 
     # Stop recording
     elif (
@@ -183,12 +210,13 @@ def read_log_line(line):
             and "mcsrranked" in line
     ):
         result = 2
+        write_to_logfile(logging_enabled, "read_log_line() Found Log Line to stop recording")
 
     elif (
             "Everyone has agreed to the seed change vote" in line
     ):
         result = 3
-
+        write_to_logfile(logging_enabled, "read_log_line() Found Log Line to stop recording for change seed")
     return result
 
 
@@ -199,7 +227,7 @@ def read_log_line(line):
 
 def rename_latest_recording(seed_change_flag):
     global winner, seed, finaltime
-
+    write_to_logfile(logging_enabled, "rename_latest_recording() starting to rename latest recording")
     if seed_change_flag == 0:
         winner, finaltime, seed = check_game_status()
     elif seed_change_flag == 1:

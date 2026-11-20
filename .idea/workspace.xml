@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="48254d33-5852-4738-9556-74900f4229c4" name="Changes" comment="Adding CLI arguments">
+      <change afterPath="$PROJECT_DIR$/Logging.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Args.py" beforeDir="false" afterPath="$PROJECT_DIR$/Args.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/General.py" beforeDir="false" afterPath="$PROJECT_DIR$/General.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -30,12 +31,12 @@
     &quot;assignee&quot;: &quot;Katchper&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Katchper/MCSR-Ranked-Recording-Tool.git",
-    "accountId": "93a639f9-d558-48f7-8462-f4cfe41b1609"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Katchper/MCSR-Ranked-Recording-Tool.git&quot;,
+    &quot;accountId&quot;: &quot;93a639f9-d558-48f7-8462-f4cfe41b1609&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -49,6 +50,7 @@
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.General.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Logging.executor&quot;: &quot;Run&quot;,
     &quot;Python.Menu.executor&quot;: &quot;Run&quot;,
     &quot;Python.TestAPI.executor&quot;: &quot;Run&quot;,
     &quot;Python.TestCreds.executor&quot;: &quot;Run&quot;,
@@ -83,7 +85,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Menu.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="PARAMETERS" value="--autostart" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />

@@ -7,11 +7,17 @@ from obsws_python import ReqClient
 
 from Args import check_args
 from General import *
+from Logging import *
 
 APP_NAME = "MCSRRecordingTool"
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 REQUIRED_SETTINGS = {"username", "mc_path", "video_path", "obs_port", "obs_server","obs_pass"}
+
+logging_enabled = True
+
+delete_old_logs()
+create_logfile(logging_enabled)
 
 class App(ctk.CTk):
     def __init__(self):
@@ -49,20 +55,12 @@ class App(ctk.CTk):
             p.grid(row=0, column=0, sticky="nsew")
 
         self.show_page("menu")
-        self.after(200, lambda: self.iconbitmap(self.resource_path("Icon.ico")))
+        self.iconbitmap(self.resource_path("Icon.ico"))
 
-    ## resource path method written by claude
 
     def resource_path(self, filename):
-        if getattr(sys, "frozen", False):
-            src = os.path.join(sys._MEIPASS, filename)
-            dst_dir = os.path.join(os.getenv("LOCALAPPDATA"), APP_NAME)
-            os.makedirs(dst_dir, exist_ok=True)
-            dst = os.path.join(dst_dir, filename)
-            if not os.path.exists(dst):
-                shutil.copy2(src, dst)
-            return dst
-        return os.path.join(os.path.dirname(__file__), filename)
+        base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_path, filename)
 
     def show_page(self, name):
         if name == "settings":
@@ -82,6 +80,7 @@ class App(ctk.CTk):
         # stop any running state safely
         self.watcher_running = False
         self.stop_recording(2)
+        write_to_logfile(logging_enabled, "on_close() Closing Application, stopped recording and disabled the watcher")
         #print("Closing app safely...")
 
         # destroy everything properly
@@ -89,7 +88,7 @@ class App(ctk.CTk):
 
     def watch_log(self):
         seed_change_flag = 0
-
+        write_to_logfile(logging_enabled, "watch_log() starting to watch log")
 
         ## Sanity check for settings as well as latest.log directory before starting the loop.
 
@@ -98,10 +97,11 @@ class App(ctk.CTk):
             try:
                 missing = settings_validation(REQUIRED_SETTINGS)
                 if missing:
+                    write_to_logfile(logging_enabled, "watch_log() Missing Settings detected")
                     raise ValueError(f"missing settings: {missing}")
 
             except:
-                #print("settings not found, sleeping for 1 second before retrying")
+                write_to_logfile(logging_enabled, "watch_log() Settings not found trying again in 2 seconds")
                 time.sleep(2)
                 continue
 
@@ -172,16 +172,18 @@ class App(ctk.CTk):
     def start_recording(self):
         if self.obs is None:
             self.connect_obs()
-
+            write_to_logfile(logging_enabled, "OBS Connected")
         if not self.obs_recording:
             self.obs.start_record()
             self.obs_recording = True
+            write_to_logfile(logging_enabled,"Started Recording")
             #print("Recording started")
 
     def stop_recording(self, seed_change_flag):
         if self.obs_recording:
             self.obs.stop_record()
             self.obs_recording = False
+            write_to_logfile(logging_enabled, "Stopped Recording")
             #print("Recording stopped")
             self.disconnect_obs()
             rename_latest_recording(seed_change_flag)
@@ -189,6 +191,7 @@ class App(ctk.CTk):
     def disconnect_obs(self):
         if self.obs is not None:
             self.obs.disconnect()
+            write_to_logfile(logging_enabled,"OBS Disconnected")
             self.obs = None
             #print("Disconnected from OBS")
             #print(self.obs)
@@ -785,8 +788,206 @@ class SettingsPage(ctk.CTkFrame):
             pady=5,
         )
 
+        ## EXPERIMENTAL SETTINGS
+        ## Setting custom flags and such
+
+        experimental_frame = ctk.CTkFrame(self.scroll_frame)
+        experimental_frame.pack(
+            fill="x",
+            padx=20,
+            pady=10
+        )
+
+        ctk.CTkLabel(
+            experimental_frame,
+            text="EXPERIMENTAL Settings (DONT EDIT BLINDLY)",
+            font=ctk.CTkFont(size=20, weight="bold")
+        ).pack(pady=10)
+
+        experimental_table = ctk.CTkFrame(
+            experimental_frame,
+            fg_color="transparent"
+        )
+        experimental_table.pack(
+            fill="x",
+            padx=15,
+            pady=(0, 15)
+        )
+
+        experimental_table.grid_columnconfigure(1, weight=1)
+        experimental_table.grid_columnconfigure(2, weight=0)
+
+        ctk.CTkLabel(
+            experimental_table,
+            text=r"Enable Logging"
+        ).grid(
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        self.logging_dropdown = ctk.CTkOptionMenu(
+            experimental_table,
+            values=["No", "Yes"]
+        )
+
+        self.logging_dropdown.grid(
+            row=0,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
 
 
+        ############################### START FLAG SETTING ###############################
+
+        ctk.CTkLabel(
+            experimental_table,
+            text="Start Recording Flag"
+        ).grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        self.start_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.start_flag_entry.grid(
+            row=1,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.start_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.start_flag_entry.grid(
+            row=1,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.start_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.start_flag_entry.grid(
+            row=1,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        ############################### STOP FLAG SETTING ###############################
+
+        ctk.CTkLabel(
+            experimental_table,
+            text="Stop Recording Flag"
+        ).grid(
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        self.stop_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.stop_flag_entry.grid(
+            row=2,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.stop_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.stop_flag_entry.grid(
+            row=2,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.stop_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.stop_flag_entry.grid(
+            row=2,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        ############################### ChANGE SEED FLAG SETTING ###############################
+
+        ctk.CTkLabel(
+            experimental_table,
+            text="Change Seed Recording Flag"
+        ).grid(
+            row=3,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w"
+        )
+
+        self.change_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.change_flag_entry.grid(
+            row=3,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.change_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.change_flag_entry.grid(
+            row=3,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.change_flag_entry = ctk.CTkEntry(
+            experimental_table
+        )
+
+        self.change_flag_entry.grid(
+            row=3,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
 
 
         # =========================
@@ -804,6 +1005,7 @@ class SettingsPage(ctk.CTkFrame):
             pady=(5, 5)
         )
 
+        ############################### IMPORT BUTTON ###############################
         ctk.CTkButton(
             import_export_frame,
             text="Import",
@@ -814,7 +1016,7 @@ class SettingsPage(ctk.CTkFrame):
             side="right",
             padx=(0, 45)
         )
-
+        ############################### EXPORT BUTTON ###############################
         ctk.CTkButton(
             import_export_frame,
             text="Export",
@@ -853,6 +1055,8 @@ class SettingsPage(ctk.CTkFrame):
             padx=(0, 10)
         )
 
+
+
         ctk.CTkButton(
             action_frame,
             text="Save",
@@ -864,9 +1068,9 @@ class SettingsPage(ctk.CTkFrame):
             expand=True,
             padx=(10, 0)
         )
-        self.load_settings()
+        self.load_json_settings()
 
-    def load_settings(self):
+    def load_json_settings(self):
         config_dir = Path(user_config_dir(APP_NAME))
         config_dir.mkdir(parents=True, exist_ok=True)
         settings_file = config_dir / "settings.json"
@@ -958,6 +1162,33 @@ class SettingsPage(ctk.CTkFrame):
             #print("error")
             pass
 
+        try:
+            self.logging_dropdown.set(settings["enable_logging"])
+        except:
+            #print("error")
+            pass
+
+        try:
+            self.start_flag_entry.delete(0, "end")
+            self.start_flag_entry.insert(0, settings["start_flag"])
+        except:
+            # print("error")
+            pass
+
+        try:
+            self.stop_flag_entry.delete(0, "end")
+            self.stop_flag_entry.insert(0, settings["stop_flag"])
+        except:
+            # print("error")
+            pass
+
+        try:
+            self.change_flag_entry.delete(0, "end")
+            self.change_flag_entry.insert(0, settings["seed_change_flag"])
+        except:
+            # print("error")
+            pass
+
 
     def save_settings(self):
         config_dir = Path(user_config_dir(APP_NAME))
@@ -979,6 +1210,10 @@ class SettingsPage(ctk.CTkFrame):
             "obs_path": self.obs_path_entry.get(),
             "ninja_path": self.ninjabrain_path_entry.get(),
             "ninja_auto_open": self.ninjabrain_dropdown.get(),
+            "enable_logging": self.logging_dropdown.get(),
+            "start_flag": self.start_flag_entry.get(),
+            "stop_flag": self.stop_flag_entry.get(),
+            "seed_change_flag": self.change_flag_entry.get(),
         }
 
         with settings_file.open("w", encoding="utf-8") as f:
@@ -1034,7 +1269,7 @@ class SettingsPage(ctk.CTkFrame):
         with settings_file.open("w", encoding="utf-8") as f:
             json.dump(settings, f, indent=4)
 
-        self.load_settings()
+        self.load_json_settings()
 
 
     def pick_obs_dir(self):
